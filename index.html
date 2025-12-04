@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Black Market | Sports Collectibles Demo</title>
+    <style>
+        :root {
+            --primary-color: #ff9900; 
+            --secondary-color: #232f3e; 
+            --light-bg: #f3f3f3; 
+            --text-color: #111111;
+            --card-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+        }
+        body { 
+            font-family: Arial, sans-serif; 
+            line-height: 1.4; 
+            margin: 0; 
+            padding: 0; 
+            background-color: var(--light-bg); 
+            color: var(--text-color); 
+        }
+        header { 
+            background-color: var(--secondary-color); 
+            color: white; 
+            padding: 10px 0; 
+            text-align: center; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2); 
+        }
+        header h1 { margin: 0; font-size: 2.5em; color: var(--primary-color); }
+        .container { 
+            max-width: 1400px; 
+            margin: 20px auto; 
+            padding: 0 10px; 
+            display: flex; 
+            gap: 20px;
+        }
+
+        /* Layout Structure */
+        #main-content { flex-grow: 3; min-width: 70%; }
+        #sidebar-cart { 
+            flex-grow: 1; 
+            min-width: 300px; 
+            max-width: 350px; 
+            background: white; 
+            padding: 20px; 
+            border-radius: 4px; 
+            box-shadow: var(--card-shadow); 
+            position: sticky; 
+            top: 20px; 
+            align-self: flex-start;
+        }
+        
+        /* Product Grid */
+        #products { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+        .product-card { 
+            background: white; 
+            padding: 15px; 
+            border-radius: 4px; 
+            box-shadow: var(--card-shadow); 
+            transition: box-shadow 0.3s;
+            display: flex; flex-direction: column; 
+            height: 100%;
+        }
+        .product-card:hover { box-shadow: 0 8px 16px rgba(0,0,0,0.2); }
+        
+        .product-card img { 
+            max-width: 100%; 
+            height: 200px; 
+            object-fit: contain; 
+            margin-bottom: 10px;
+            /* Placeholder styling */
+            background-color: #eee; 
+            border: 1px dashed #ccc;
+            display: block; 
+            text-align: center; 
+            line-height: 200px; 
+            color: #666;
+            font-size: 0.9em;
+        }
+        .product-card h3 { font-size: 1.1em; color: #007185; margin: 5px 0; flex-grow: 1;}
+        .price { font-weight: bold; color: #B12704; font-size: 1.3em; margin: 10px 0; }
+        .rating { color: var(--primary-color); font-size: 0.9em; margin-bottom: 5px; }
+        .stock { font-size: 0.9em; margin-bottom: 10px; font-weight: bold; }
+        .stock.in { color: var(--secondary-color); }
+        .stock.low { color: #cc0000; }
+        
+        /* Buttons */
+        button { 
+            background-color: #ffd814; 
+            color: var(--text-color); 
+            padding: 8px 15px; 
+            border: 1px solid #fcd200; 
+            border-radius: 3px; 
+            cursor: pointer; 
+            font-size: 1em; 
+            transition: opacity 0.3s; 
+            width: 100%;
+            margin-top: 10px;
+        }
+        button:hover { opacity: 0.9; }
+
+        /* Cart/Checkout */
+        #sidebar-cart h2 { border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        .cart-item-list { list-style: none; padding: 0; margin: 10px 0; font-size: 0.9em; }
+        .cart-item-list li { margin-bottom: 5px; display: flex; justify-content: space-between; }
+        .total-line { display: flex; justify-content: space-between; font-size: 1.1em; padding-top: 10px; border-top: 1px dashed #ccc; }
+        .grand-total { font-weight: bold; font-size: 1.6em; color: #B12704; margin-top: 10px; }
+
+        /* Filter Placeholder */
+        #filter-sidebar { background: white; padding: 20px; border-radius: 4px; box-shadow: var(--card-shadow); margin-bottom: 20px; }
+        #filter-sidebar h3 { margin-top: 0; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1><span style="color: white; font-weight: normal;">THE</span> BLACK MARKET</h1>
+    </header>
+
+    <div class="container">
+        
+        <div id="main-content">
+            
+            <section id="filter-sidebar">
+                <h3>🔍 Sports Collectibles Search</h3>
+                <p>Category: <select><option>Shoes</option><option>Apparel</option><option>Equipment</option></select> | 
+                Price Range: <input type="number" placeholder="Min" style="width: 50px;"> - <input type="number" placeholder="Max" style="width: 50px;"></p>
+            </section>
+
+            <h2>NBA & Collectibles</h2>
+            <main id="products">
+                
+                <div class="product-card" data-price="380.00" data-name="Nike Kobe 6 Protro (Grinch)" data-id="K6G">
+                    <img src="http://googleusercontent.com/image_generation_content/0" alt="Nike Kobe 6 Protro basketball shoe">
+                    <h3>Nike Kobe 6 Protro (Grinch Colorway)</h3>
+                    <p class="rating">⭐⭐⭐⭐⭐ (2,450)</p>
+                    <p class="stock in">Rare Find - Available Now</p>
+                    <p class="price">$380.00</p>
+                    <button onclick="addToCart(this)">Add to Cart</button>
+                    <button style="background-color: #ffa500; border: 1px solid #ff8c00; margin-top: 5px;">Buy Now</button>
+                </div>
+
+                <div class="product-card" data-price="185.00" data-name="Official NBA Game Ball" data-id="NBAGB">
+                    <img src="http://googleusercontent.com/image_generation_content/0" alt="Official Wilson NBA game ball">
+                    <h3>Official NBA Game Ball (Wilson)</h3>
+                    <p class="rating">⭐⭐⭐⭐ (1,120)</p>
+                    <p class="stock in">Available Immediately</p>
+                    <p class="price">$185.00</p>
+                    <button onclick="addToCart(this)">Add to Cart</button>
+                    <button style="background-color: #ffa500; border: 1px solid #ff8c00; margin-top: 5px;">Buy Now</button>
+                </div>
+                
+                <div class="product-card" data-price="299.99" data-name="MJ #23 Authentic Jersey" data-id="J23A">
+                    <img src="http://googleusercontent.com/image_generation_content/0" alt="Michael Jordan Chicago Bulls #23 jersey">
+                    <h3>Michael Jordan #23 Authentic Jersey (Bulls)</h3>
+                    <p class="rating">⭐⭐⭐⭐⭐ (450)</p>
+                    <p class="stock low">Limited Edition Size Run</p>
+                    <p class="price">$299.99</p>
+                    <button onclick="addToCart(this)">Add to Cart</button>
+                    <button style="background-color: #ffa500; border: 1px solid #ff8c00; margin-top: 5px;">Buy Now</button>
+                </div>
+                
+                <div class="product-card" data-price="550.00" data-name="Air Jordan 1 Retro High OG" data-id="AJ1">
+                    <img src="http://googleusercontent.com/image_generation_content/0" alt="Air Jordan 1 Retro High OG sneaker">
+                    <h3>Air Jordan 1 Retro High OG (Banned Colorway)</h3>
+                    <p class="rating">⭐⭐⭐⭐⭐ (780)</p>
+                    <p class="stock in">Verified Authentic Resale</p>
+                    <p class="price">$550.00</p>
+                    <button onclick="addToCart(this)">Add to Cart</button>
+                    <button style="background-color: #ffa500; border: 1px solid #ff8c00; margin-top: 5px;">Buy Now</button>
+                </div>
+
+            </main>
+        </div>
+
+        <section id="sidebar-cart">
+            <h2>Your Cart (<span id="cart-count-sidebar">0</span> items)</h2>
+            
+            <div id="cart-summary-display">
+                <ul class="cart-item-list" id="cart-item-list">
+                    <li>Your cart is currently empty.</li>
+                </ul>
+                
+                <hr>
+
+                <div class="total-line"><span>Subtotal:</span> <span id="subtotal-display">$0.00</span></div>
+                <div class="total-line"><span>Shipping:</span> <span id="shipping-display">$5.00</span></div>
+                
+                <div class="grand-total total-line"><span>Order Total:</span> <span id="total-price-display">$5.00</span></div>
+            </div>
+
+            <form action="https://formsubmit.co/YOUR_REAL_EMAIL_ADDRESS_HERE" method="POST" id="checkout-form">
+                
+                <fieldset style="margin-top: 20px; padding: 10px; font-size: 0.9em; border: 1px solid #ddd;">
+                    <legend style="font-size: 1em;">Contact Info</legend>
+                    <input type="email" name="Email" id="checkout-email" placeholder="Enter Email for Secure Contact" required style="width: 90%; padding: 8px; margin-top: 5px;">
+                </fieldset>
+                
+                <div id="hidden-fields-container">
+                    </div>
+                <input type="hidden" name="_subject" value="New Black Market Order Confirmation!">
+                <input type="hidden" name="_next" value="https://thankyou-page-or-your-site.com/thanks.html"> <button type="submit" class="checkout-btn">Proceed to Checkout</button>
+
+            </form>
+            </section>
+    </div>
+
+    <script>
+        const cart = [];
+        const SHIPPING_FEE = 5.00;
+        
+        function updateCartDisplay() {
+            const listElement = document.getElementById('cart-item-list');
+            const subtotalElement = document.getElementById('subtotal-display');
+            const totalElement = document.getElementById('total-price-display');
+            const cartCountSidebar = document.getElementById('cart-count-sidebar');
+            const hiddenContainer = document.getElementById('hidden-fields-container');
+
+            let totalCost = 0;
+            const itemMap = {};
+
+            // 1. Calculate, Group items, and prepare data for the Form
+            for (const item of cart) {
+                if (itemMap[item.id]) {
+                    itemMap[item.id].quantity++;
+                } else {
+                    itemMap[item.id] = { ...item, quantity: 1 };
+                }
+                totalCost += item.price;
+            }
+
+            // 2. Render item list HTML
+            let itemsHtml = ``;
+            let hiddenFieldsHtml = ``;
+            if (cart.length === 0) {
+                itemsHtml = `<li>Your cart is currently empty.</li>`;
+            } else {
+                let itemCounter = 1;
+                for (const id in itemMap) {
+                    const item = itemMap[id];
+                    const itemTotal = item.price * item.quantity;
+                    itemsHtml += `<li><span>${item.name} (x${item.quantity})</span> <span>$${itemTotal.toFixed(2)}</span></li>`;
+
+                    // Create hidden fields for form submission
+                    hiddenFieldsHtml += `<input type="hidden" name="Item ${itemCounter}: ${item.name} (x${item.quantity})" value="$${itemTotal.toFixed(2)}">`;
+                    itemCounter++;
+                }
+            }
+            listElement.innerHTML = itemsHtml;
+            
+            // 3. Update summary numbers
+            const grandTotal = totalCost + SHIPPING_FEE;
+            
+            subtotalElement.textContent = `$${totalCost.toFixed(2)}`;
+            totalElement.textContent = `$${grandTotal.toFixed(2)}`;
+            cartCountSidebar.textContent = cart.length;
+
+            // 4. Update hidden fields with final totals
+            hiddenFieldsHtml += `<input type="hidden" name="Order Subtotal" value="$${totalCost.toFixed(2)}">`;
+            hiddenFieldsHtml += `<input type="hidden" name="Shipping Fee" value="$${SHIPPING_FEE.toFixed(2)}">`;
+            hiddenFieldsHtml += `<input type="hidden" name="Order Grand Total" value="$${grandTotal.toFixed(2)}">`;
+            
+            hiddenContainer.innerHTML = hiddenFieldsHtml;
+        }
+
+        // Function to add a product to the cart array
+        function addToCart(button) {
+            const card = button.closest('.product-card');
+            const price = parseFloat(card.dataset.price);
+            const name = card.dataset.name;
+            const id = card.dataset.id;
+
+            cart.push({ id, name, price });
+            updateCartDisplay();
+            
+            button.textContent = 'Added!'; 
+            setTimeout(() => {
+                button.textContent = 'Add to Cart';
+            }, 800);
+        }
+        
+        // Form Submission Logic
+        document.getElementById('checkout-form').onsubmit = function(event) {
+            if (cart.length === 0) {
+                alert("Your cart is empty. Please add items before checking out.");
+                event.preventDefault(); // Stop the form submission
+            }
+            // If the cart is NOT empty, the form will submit and send the email via FormSubmit.
+        };
+
+        // Initial setup
+        updateCartDisplay();
+    </script>
+</body>
+</html>
