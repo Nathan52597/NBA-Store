@@ -69,7 +69,7 @@
             height: 200px; 
             object-fit: contain; 
             margin-bottom: 10px;
-            /* Placeholder styling */
+            /* Placeholder styling will be visible due to broken link */
             background-color: #eee; 
             border: 1px dashed #ccc;
             display: block; 
@@ -110,6 +110,32 @@
         /* Filter Placeholder */
         #filter-sidebar { background: white; padding: 20px; border-radius: 4px; box-shadow: var(--card-shadow); margin-bottom: 20px; }
         #filter-sidebar h3 { margin-top: 0; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+
+        /* New Email Form Styling (To distinguish it from checkout form) */
+        .simple-email-form {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #ccc;
+        }
+        .simple-email-form h3 {
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+        .simple-email-form input[type="email"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            box-sizing: border-box;
+        }
+        .simple-email-form button {
+            background-color: #4CAF50; /* Green button for distinction */
+            border: 1px solid #388E3C;
+        }
+        .simple-email-form button:hover {
+             background-color: #388E3C;
+        }
     </style>
 </head>
 <body>
@@ -190,18 +216,28 @@
                 <div class="grand-total total-line"><span>Order Total:</span> <span id="total-price-display">$5.00</span></div>
             </div>
 
-            <form action="https://formsubmit.co/YOUR_REAL_EMAIL_ADDRESS_HERE" method="POST" id="checkout-form">
+            <form action="#" onsubmit="return false;" id="checkout-form">
                 
                 <fieldset style="margin-top: 20px; padding: 10px; font-size: 0.9em; border: 1px solid #ddd;">
-                    <legend style="font-size: 1em;">Contact Info</legend>
-                    <input type="email" name="Email" id="checkout-email" placeholder="Enter Email for Secure Contact" required style="width: 90%; padding: 8px; margin-top: 5px;">
+                    <legend style="font-size: 1em;">Contact Info for Order</legend>
+                    <input type="email" id="checkout-email" placeholder="Enter Email for Secure Contact" required style="width: 90%; padding: 8px; margin-top: 5px;">
                 </fieldset>
                 
-                <div id="hidden-fields-container">
-                    </div>
-                <input type="hidden" name="_subject" value="New Black Market Order Confirmation!">
-                <input type="hidden" name="_next" value="https://thankyou-page-or-your-site.com/thanks.html"> <button type="submit" class="checkout-btn">Proceed to Checkout</button>
+                <div id="hidden-fields-container"></div>
+                
+                <button type="button" class="checkout-btn" onclick="simulateCheckout()">Proceed to Checkout (Simulated)</button>
+            </form>
 
+            <form action="https://formsubmit.co/YOUR_REAL_EMAIL_ADDRESS_HERE" method="POST" class="simple-email-form">
+                <h3>Test Real Email Delivery</h3>
+                
+                <input type="hidden" name="_subject" value="Simple Test Email Received!">
+                
+                <input type="email" name="Test_Email_Address" placeholder="Enter an address to send this test to" required>
+                
+                <input type="hidden" name="_next" value="https://example.com/thank-you.html">
+                
+                <button type="submit">Send Test Email</button>
             </form>
             </section>
     </div>
@@ -215,12 +251,11 @@
             const subtotalElement = document.getElementById('subtotal-display');
             const totalElement = document.getElementById('total-price-display');
             const cartCountSidebar = document.getElementById('cart-count-sidebar');
-            const hiddenContainer = document.getElementById('hidden-fields-container');
 
             let totalCost = 0;
             const itemMap = {};
 
-            // 1. Calculate, Group items, and prepare data for the Form
+            // 1. Calculate and Group items
             for (const item of cart) {
                 if (itemMap[item.id]) {
                     itemMap[item.id].quantity++;
@@ -232,19 +267,13 @@
 
             // 2. Render item list HTML
             let itemsHtml = ``;
-            let hiddenFieldsHtml = ``;
             if (cart.length === 0) {
                 itemsHtml = `<li>Your cart is currently empty.</li>`;
             } else {
-                let itemCounter = 1;
                 for (const id in itemMap) {
                     const item = itemMap[id];
                     const itemTotal = item.price * item.quantity;
                     itemsHtml += `<li><span>${item.name} (x${item.quantity})</span> <span>$${itemTotal.toFixed(2)}</span></li>`;
-
-                    // Create hidden fields for form submission
-                    hiddenFieldsHtml += `<input type="hidden" name="Item ${itemCounter}: ${item.name} (x${item.quantity})" value="$${itemTotal.toFixed(2)}">`;
-                    itemCounter++;
                 }
             }
             listElement.innerHTML = itemsHtml;
@@ -255,13 +284,6 @@
             subtotalElement.textContent = `$${totalCost.toFixed(2)}`;
             totalElement.textContent = `$${grandTotal.toFixed(2)}`;
             cartCountSidebar.textContent = cart.length;
-
-            // 4. Update hidden fields with final totals
-            hiddenFieldsHtml += `<input type="hidden" name="Order Subtotal" value="$${totalCost.toFixed(2)}">`;
-            hiddenFieldsHtml += `<input type="hidden" name="Shipping Fee" value="$${SHIPPING_FEE.toFixed(2)}">`;
-            hiddenFieldsHtml += `<input type="hidden" name="Order Grand Total" value="$${grandTotal.toFixed(2)}">`;
-            
-            hiddenContainer.innerHTML = hiddenFieldsHtml;
         }
 
         // Function to add a product to the cart array
@@ -279,15 +301,48 @@
                 button.textContent = 'Add to Cart';
             }, 800);
         }
-        
-        // Form Submission Logic
-        document.getElementById('checkout-form').onsubmit = function(event) {
+
+        // Function to simulate the checkout process (uses JS alert/log, NOT real email)
+        function simulateCheckout() {
+            const email = document.getElementById('checkout-email').value;
+            const total = document.getElementById('total-price-display').textContent;
+            
             if (cart.length === 0) {
-                alert("Your cart is empty. Please add items before checking out.");
-                event.preventDefault(); // Stop the form submission
+                alert("Your cart is empty. Please add items.");
+                return;
             }
-            // If the cart is NOT empty, the form will submit and send the email via FormSubmit.
-        };
+
+            if (!email || !email.includes('@')) {
+                alert("Please enter a valid email address for the order confirmation.");
+                return;
+            }
+
+            // --- Server-Side Simulation (Logged to Console) ---
+            const orderSummary = {
+                email: email,
+                total: total,
+                items: cart.map(item => ({ id: item.id, name: item.name, price: item.price })),
+                timestamp: new Date().toISOString()
+            };
+            
+            console.log("--- ORDER SUBMITTED ---");
+            console.log("Buyer Email:", orderSummary.email);
+            console.log("Order Data (for server):", orderSummary);
+            console.log("-----------------------");
+            
+            alert(`
+                ✨ ORDER PROCESSED (Simulation) ✨
+
+                Confirmation email simulated to be sent to:
+                ${email}
+
+                Order Total: ${total}
+            `);
+            // Reset the cart after "checkout"
+            cart.length = 0;
+            updateCartDisplay();
+            document.getElementById('checkout-email').value = '';
+        }
 
         // Initial setup
         updateCartDisplay();
